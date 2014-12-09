@@ -1,0 +1,92 @@
+﻿<Window
+    x:Class="ScriptingHostDemoUI.MainWindow"
+    x:Name="XWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:app="clr-namespace:App" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:ScriptingHostDemoUI"
+    xmlns:scriptingHost="clr-namespace:ScriptingHost;assembly=ScriptingHost"
+    mc:Ignorable="d"
+    Title="MainWindow" Height="350" Width="525" d:DataContext="{d:DesignInstance local:MainViewModel}">
+    <Window.Resources>
+        <app:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <app:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Expander x:Name="XMenuPanel" ExpandDirection="Right" Grid.Column="0" IsExpanded="False">
+            <ListBox
+                    x:Name="XScriptList"
+                    ItemsSource="{Binding Scripts}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="scriptingHost:ScriptInfo">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                    Text="{Binding Name}"
+                                    Margin="3" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ListBox>
+        </Expander>
+        <StackPanel Grid.Column="1">
+            <StackPanel Grid.Row="0" Visibility="{Binding Running,Converter={StaticResource BoolToVisibilityConverter}}">
+                <ProgressBar IsIndeterminate="True" Height="25" />
+                <TextBlock Text="Running..." />
+            </StackPanel>
+            <StackPanel Grid.Row="1">               
+                <StackPanel
+                x:Name="XScript"
+                Visibility="{Binding Code,Converter={StaticResource NullToVisibilityConverter}}">
+                    <TextBox
+                    HorizontalAlignment="Left"
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    Text="{Binding Code,Mode=TwoWay}"
+                    VerticalAlignment="Top" Margin="5,5,0,5"
+                    VerticalContentAlignment="Center"
+                    Visibility="{Binding Visibility,ElementName=XScript}" />
+                </StackPanel>
+                <StackPanel x:Name="XResult"
+                        Margin="10,10,10,51"
+                        Visibility="{Binding ScriptResult,Converter={StaticResource NullToVisibilityConverter}}">
+                    <TextBox
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap"
+                    Text="{Binding ScriptResult,Mode=OneWay}"
+                    VerticalAlignment="Top" Margin="5,5,0,5"
+                    IsReadOnly="True"
+                    Visibility="{Binding Visibility,ElementName=XResult}" />
+                </StackPanel>
+                <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Left"
+                Height="36" Margin="10,273,0,0"
+                VerticalAlignment="Top"
+                Width="497">
+                    <Button
+                    Width="200"
+                    Content="Run"
+                    Command="{Binding ExecuteScript}"
+                    CommandParameter="{Binding SelectedScript}"
+                    Margin="3" />
+                    <Button
+                    Width="200"
+                    Content="Ok"
+                    Command="{Binding ClearError}"
+                    Margin="10,3,3,3"
+                    Visibility="{Binding ScriptResult,Converter={StaticResource NullToVisibilityConverter}}" />
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
+    </Grid>   
+</Window>
